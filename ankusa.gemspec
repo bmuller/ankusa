@@ -14,5 +14,5 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.rubygems_version = "1.3.5"
   s.add_dependency('hbaserb', '>= 0.0.1')
-  s.add_dependency('stemmer', '>= 1.0.1')
+  s.add_dependency('fast-stemmer', '>= 1.0.0')
 end

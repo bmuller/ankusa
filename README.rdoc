@@ -30,4 +30,7 @@ Then, install ankusa:
 
   # This will return Hash with classes as keys and 
   # membership probability as values
-  puts c.classes "This is some spammy text"
+  puts c.classifications "This is some spammy text"
+
+  # get a list of all classes
+  puts c.classes
