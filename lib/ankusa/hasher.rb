@@ -24,7 +24,7 @@ module Ankusa
       word = word.downcase
       if not Ankusa::STOPWORDS.include? word
         @word_count += 1
-        key = word.intern
+        key = word.stem.intern
         store key, fetch(key, 0)+1
       end
     end

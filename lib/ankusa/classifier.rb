@@ -37,14 +37,14 @@ module Ankusa
     
     def classifications(text)
       classes = {}
-      results = {}
+      result = {}
       @classnames.each { |k| 
         classes[k] = NBClass.new k, summary_table, freq_table
         result[k] = 0 
       }
 
       TextHash.new(text).each { |word,count|
-        probs = get_counts(word)
+        probs = get_word_probs(word, classes)
         @classnames.each { |k|
           result[k] += Math.log(probs[k] / classes[k].word_count)
         }
@@ -54,9 +54,10 @@ module Ankusa
         result[k] += Math.log(classes[k].doc_count / doc_count_total)
       }
 
-      # todo
-      # normalize logs to make probs
-      # implement get_counts
+      sum = result.inject { |x,y| x+y }
+      result.keys.each { |klass|
+        result[klass] = result[klass] / sum
+      }
 
       result
     end
@@ -91,6 +92,19 @@ module Ankusa
     end
     
     protected
+    def get_word_probs(word, classes)
+      probs = {}
+      @classnames.each { |cn| probs[cn] = 0.0001 }
+      row = freq_table.get_row(word)
+      return probs if row.length == 0
+
+      row.first.columns.each { |colname, cell|
+        classname = colname.split(':')[1]
+        probs[classname] = cell.to_i64.to_f / classes[classname].word_count
+      }
+      probs
+    end
+
     def init_tables
       if not @hbase.has_table? @ftablename
         @hbase.create_table @ftablename, "classes", "total"
