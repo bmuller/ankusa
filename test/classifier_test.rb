@@ -28,14 +28,19 @@ class ClassifierTest < Test::Unit::TestCase
   end
 
   def test_probs
-    spamlog = Math.log(2.0/3.0) + Math.log(Ankusa::SMALL_PROB / 3.0) + Math.log(1.0 / 3.0)
-    goodlog = Math.log(Ankusa::SMALL_PROB / 4.0) + Math.log(Ankusa::SMALL_PROB / 4.0) + Math.log(2.0 / 3.0)
+    spamlog = Math.exp(Math.log(2.0/3.0) + Math.log(Ankusa::SMALL_PROB / 3.0) + Math.log(1.0 / 3.0))
+    goodlog = Math.exp(Math.log(Ankusa::SMALL_PROB / 4.0) + Math.log(Ankusa::SMALL_PROB / 4.0) + Math.log(2.0 / 3.0))
     spamprob = spamlog / (spamlog + goodlog)
     goodprob = goodlog / (spamlog + goodlog)
 
     cs = @ankusa.classifications("spam is tastey")
     assert_equal cs[:spam], spamprob
     assert_equal cs[:good], goodprob
+  end
+
+  def test_prob_result
+    cs = @ankusa.classifications("spam is tastey").sort_by { |c| c[1] }.first.first
+    assert_equal cs, @ankusa.classify("spam is tastey")
   end
   
   def teardown

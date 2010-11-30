@@ -49,11 +49,9 @@ module Ankusa
         @classnames.each { |k| result[k] += Math.log(probs[k]) }
       }
      
-      @classnames.each { |k|
-        p = classes[k].doc_count / doc_count_total
-        result[k] += Math.log(classes[k].doc_count / doc_count_total)
-      }
+      @classnames.each { |k| result[k] += Math.log(classes[k].doc_count / doc_count_total) }
 
+      result.keys.each { |k| result[k] = Math.exp(result[k]) }
       sum = result.values.inject { |x,y| x+y }
       result.keys.each { |klass|
         result[klass] = result[klass] / sum
