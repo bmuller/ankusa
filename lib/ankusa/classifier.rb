@@ -1,4 +1,5 @@
 module Ankusa
+  SMALL_PROB = 0.0001
 
   class Classifier
     attr_reader :classnames
@@ -45,16 +46,15 @@ module Ankusa
 
       TextHash.new(text).each { |word,count|
         probs = get_word_probs(word, classes)
-        @classnames.each { |k|
-          result[k] += Math.log(probs[k] / classes[k].word_count)
-        }
+        @classnames.each { |k| result[k] += Math.log(probs[k]) }
       }
      
       @classnames.each { |k|
+        p = classes[k].doc_count / doc_count_total
         result[k] += Math.log(classes[k].doc_count / doc_count_total)
       }
 
-      sum = result.inject { |x,y| x+y }
+      sum = result.values.inject { |x,y| x+y }
       result.keys.each { |klass|
         result[klass] = result[klass] / sum
       }
@@ -94,12 +94,12 @@ module Ankusa
     protected
     def get_word_probs(word, classes)
       probs = {}
-      @classnames.each { |cn| probs[cn] = 0.0001 }
+      @classnames.each { |cn| probs[cn] = Ankusa::SMALL_PROB / classes[cn].word_count }
       row = freq_table.get_row(word)
       return probs if row.length == 0
 
       row.first.columns.each { |colname, cell|
-        classname = colname.split(':')[1]
+        classname = colname.split(':')[1].intern
         probs[classname] = cell.to_i64.to_f / classes[classname].word_count
       }
       probs

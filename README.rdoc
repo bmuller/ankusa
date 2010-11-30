@@ -3,15 +3,9 @@
 Ankusa is a Naive Bayes classifier in Ruby that uses Hadoop's HBase for storage.  Because it uses HBase as a backend, the training corpus can be many terabytes in size.
 
 == Installation
-First, install hbaserb:
-  git clone git://github.com/bmuller/hbaserb.git
-  cd hbaserb
-  gem build hbaserb.gemspec && gem install hbaserb
+First, install HBase / Hadoop.  Make sure the HBase Thrift interface has been started as well.  Then:
 
-Then, install ankusa:
-  git clone git://github.com/livingsocial/ankusa.git
-  cd ankusa
-  gem build ankusa.gemspec && gem install ankusa
+  gem install ankusa
 
 == Basic Usage
   require 'rubygems'
