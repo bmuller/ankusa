@@ -22,7 +22,7 @@ Rake::TestTask.new("test") { |t|
 
 spec = Gem::Specification.new do |s|
   s.name = "ankusa"
-  s.version = "0.0.1"
+  s.version = "0.0.2"
   s.authors = ["Brian Muller"]
   s.date = %q{2010-11-29}
   s.description = "Naive Bayes classifier with HBase storage"
