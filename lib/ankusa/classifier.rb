@@ -11,29 +11,36 @@ module Ankusa
       init_tables
       @classnames = refresh_classnames
     end
- 
+
+    # text can be either an array of strings or a string
+    # klass is a symbol
     def train(klass, text)
       th = TextHash.new(text)
       th.each { |word, count|
         freq_table.atomic_increment word, "classes:#{klass.to_s}", count
+        yield word, count if block_given?
       }
       summary_table.atomic_increment klass, "totals:wordcount", th.word_count
-      summary_table.atomic_increment klass, "totals:doccount"
+      doccount = (text.kind_of? Array) ? text.length : 1
+      summary_table.atomic_increment klass, "totals:doccount", doccount
       @classnames << klass if not @classnames.include? klass
     end
 
+    # text can be either an array of strings or a string
+    # klass is a symbol
     def untrain(klass, text)
       th = TextHash.new(text)
       th.each { |word, count|
         freq_table.atomic_increment word, "classes:#{klass.to_s}", -count
       }
       summary_table.atomic_increment klass, "totals:wordcount", -th.word_count
-      summary_table.atomic_increment klass, "totals:doccount", -1
+      doccount = (text.kind_of? Array) ? text.length : 1
+      summary_table.atomic_increment klass, "totals:doccount", -doccount
     end
 
     def classify(text)
       # return the most probable class
-      classifications(text).sort { |o,t| o[1] <=> t[1] }.first.first
+      classifications(text).sort_by { |c| c[1] }.first.first
     end
     
     def classifications(text)
@@ -46,16 +53,21 @@ module Ankusa
 
       TextHash.new(text).each { |word,count|
         probs = get_word_probs(word, classes)
-        @classnames.each { |k| result[k] += Math.log(probs[k]) }
+        #puts "[#{word}]: " + probs.map { |k,v| "#{k}: #{v}" }.join(", ")
+        @classnames.each { |k| 
+          result[k] += Math.log(probs[k]) rescue Math.log(1/classes[k].word_count)
+        }
       }
      
       @classnames.each { |k| result[k] += Math.log(classes[k].doc_count / doc_count_total) }
 
-      result.keys.each { |k| result[k] = Math.exp(result[k]) }
-      sum = result.values.inject { |x,y| x+y }
-      result.keys.each { |klass|
-        result[klass] = result[klass] / sum
-      }
+      #puts "Unexped Resuls: " + result.map { |k,v| "#{k}: #{v}" }.join(", ")
+      #result.keys.each { |k| result[k] = Math.exp(result[k]) }
+      #puts "Unnormalized Resuls: " + result.map { |k,v| "#{k}: #{v}" }.join(", ")
+      #sum = result.values.inject { |x,y| x+y }
+      #result.keys.each { |klass|
+      #  result[klass] = result[klass] / sum
+      #}
 
       result
     end
@@ -92,7 +104,7 @@ module Ankusa
     protected
     def get_word_probs(word, classes)
       probs = {}
-      @classnames.each { |cn| probs[cn] = Ankusa::SMALL_PROB / classes[cn].word_count }
+      @classnames.each { |cn| probs[cn] = 1 / classes[cn].word_count }
       row = freq_table.get_row(word)
       return probs if row.length == 0
 

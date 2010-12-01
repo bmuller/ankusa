@@ -1,3 +1,4 @@
+require 'ankusa/extensions'
 require 'ankusa/classifier'
 require 'ankusa/hasher'
 require 'ankusa/nbclass'
