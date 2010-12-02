@@ -1,4 +1,5 @@
 require 'ankusa/extensions'
 require 'ankusa/classifier'
 require 'ankusa/hasher'
-require 'ankusa/nbclass'
+require 'ankusa/memory_storage'
+require 'ankusa/hbase_storage'

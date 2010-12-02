@@ -10,12 +10,11 @@ First, install HBase / Hadoop.  Make sure the HBase Thrift interface has been st
 == Basic Usage
   require 'rubygems'
   require 'ankusa'
-  require 'hbaserb'
 
   # connect to HBase 
-  client = HBaseRb::Client.new 'localhost'
+  storage = Ankusa::HBaseStorage.new 'localhost'
+  c = Ankusa::Classifier.new storage
 
-  c = Classifier.new client
   c.train :spam, "This is some spammy text"
   c.train :good, "This is not the bad stuff"
 
@@ -28,3 +27,6 @@ First, install HBase / Hadoop.  Make sure the HBase Thrift interface has been st
 
   # get a list of all classes
   puts c.classes
+
+  # close connection
+  storage.close
