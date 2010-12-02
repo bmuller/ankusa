@@ -32,7 +32,7 @@ spec = Gem::Specification.new do |s|
   s.homepage = "https://github.com/livingsocial/ankusa"
   s.require_paths = ["lib"]
   s.rubygems_version = "1.3.5"
-  s.add_dependency('hbaserb', '>= 0.0.1')
+  s.add_dependency('hbaserb', '>= 0.0.2')
   s.add_dependency('fast-stemmer', '>= 1.0.0')
 end
 
