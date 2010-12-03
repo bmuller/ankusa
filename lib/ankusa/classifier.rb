@@ -21,6 +21,7 @@ module Ankusa
       doccount = (text.kind_of? Array) ? text.length : 1
       @storage.incr_doc_count klass, doccount
       @classnames << klass if not @classnames.include? klass
+      th
     end
 
     # text can be either an array of strings or a string
@@ -34,6 +35,7 @@ module Ankusa
       @storage.incr_total_word_count klass, -th.word_count
       doccount = (text.kind_of? Array) ? text.length : 1
       @storage.incr_doc_count klass, -doccount
+      th
     end
 
     def classify(text)
