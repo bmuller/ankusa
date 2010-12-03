@@ -22,7 +22,7 @@ Rake::TestTask.new("test") { |t|
 
 spec = Gem::Specification.new do |s|
   s.name = "ankusa"
-  s.version = "0.0.3"
+  s.version = "0.0.4"
   s.authors = ["Brian Muller"]
   s.date = %q{2010-12-02}
   s.description = "Naive Bayes classifier with HBase storage"
@@ -32,7 +32,7 @@ spec = Gem::Specification.new do |s|
   s.homepage = "https://github.com/livingsocial/ankusa"
   s.require_paths = ["lib"]
   s.rubygems_version = "1.3.5"
-  s.add_dependency('hbaserb', '>= 0.0.2')
+  s.add_dependency('hbaserb', '>= 0.0.3')
   s.add_dependency('fast-stemmer', '>= 1.0.0')
 end
 
