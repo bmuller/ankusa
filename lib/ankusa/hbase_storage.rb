@@ -53,10 +53,15 @@ module Ankusa
 
       row.first.columns.each { |colname, cell|
         classname = colname.split(':')[1].intern
-        counts[classname] = cell.to_i64.to_f
+        # in case untrain has been called too many times
+        counts[classname] = [cell.to_i64.to_f, 0].max
       }
 
       counts
+    end
+
+    def get_vocabulary_sizes
+      get_summary "totals:vocabsize"
     end
 
     def get_total_word_count(klass)
@@ -72,7 +77,15 @@ module Ankusa
     end
 
     def incr_word_count(klass, word, count)
-      freq_table.atomic_increment word, "classes:#{klass.to_s}", count
+      size = freq_table.atomic_increment word, "classes:#{klass.to_s}", count
+      # if this is a new word, increase the klass's vocab size.  If the new word
+      # count is 0, then we need to decrement our vocab size
+      if size == count
+        summary_table.atomic_increment klass, "totals:vocabsize"
+      elsif size == 0
+        summary_table.atomic_increment klass, "totals:vocabsize", -1        
+      end
+      size
     end
 
     def incr_total_word_count(klass, count)
@@ -83,13 +96,8 @@ module Ankusa
       @klass_doc_counts[klass] = summary_table.atomic_increment klass, "totals:doccount", count
     end
 
-    def doc_count_total(classes=nil)
-      total = 0
-      classes = classes.map { |c| c.to_s } if not classes.nil?
-      summary_table.create_scanner("", "totals:doccount") { |row|
-        total += row.columns["totals:doccount"].to_i64 if classes.nil? or classes.include? row.row
-      }
-      total
+    def doc_count_totals
+      get_summary "totals:doccount"
     end
 
     def close
@@ -97,6 +105,14 @@ module Ankusa
     end
 
     protected
+    def get_summary(name)
+      counts = Hash.new 0
+      summary_table.create_scanner("", name) { |row|
+        counts[row.row.intern] = row.columns[name].to_i64
+      }
+      counts
+    end
+
     def summary_table
       @stable ||= @hbase.get_table @stablename
     end

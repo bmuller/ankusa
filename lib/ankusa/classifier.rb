@@ -21,6 +21,9 @@ module Ankusa
       doccount = (text.kind_of? Array) ? text.length : 1
       @storage.incr_doc_count klass, doccount
       @classnames << klass if not @classnames.include? klass
+      # cache is now dirty of these vars
+      @doc_count_totals = nil
+      @vocab_sizes = nil
       th
     end
 
@@ -35,6 +38,9 @@ module Ankusa
       @storage.incr_total_word_count klass, -th.word_count
       doccount = (text.kind_of? Array) ? text.length : 1
       @storage.incr_doc_count klass, -doccount
+      # cache is now dirty of these vars
+      @doc_count_totals = nil
+      @vocab_sizes = nil
       th
     end
 
@@ -54,7 +60,8 @@ module Ankusa
       }
 
       # add the prior and exponentiate
-      doc_count_total = (@storage.doc_count_total(classnames) + classnames.length).to_f
+      doc_counts = doc_count_totals.select { |k,v| classnames.include? k }.map { |k,v| v }
+      doc_count_total = (doc_counts.inject { |x,y| x+y } + classnames.length).to_f
       classnames.each { |k| 
         result[k] += Math.log((@storage.get_doc_count(k) + 1).to_f / doc_count_total) 
         result[k] = Math.exp(result[k])
@@ -70,11 +77,20 @@ module Ankusa
     def get_word_probs(word, classnames)
       probs = Hash.new 0
       @storage.get_word_counts(word).each { |k,v| probs[k] = v if classnames.include? k }
+      vs = vocab_sizes
       classnames.each { |cn| 
         # use a laplacian smoother
-        probs[cn] = (probs[cn] + 1).to_f / (@storage.get_total_word_count(cn) + 1).to_f
+        probs[cn] = (probs[cn] + 1).to_f / (@storage.get_total_word_count(cn) + vs[cn]).to_f
       }
       probs
+    end
+
+    def doc_count_totals
+      @doc_count_totals ||= @storage.doc_count_totals
+    end
+
+    def vocab_sizes
+      @vocab_sizes ||= @storage.get_vocabulary_sizes
     end
 
   end

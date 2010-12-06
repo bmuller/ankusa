@@ -24,6 +24,14 @@ module Ankusa
       @klass_doc_counts = {}
     end
 
+    def get_vocabulary_sizes
+      count = Hash.new 0
+      @freqs.each { |w, ks|
+        ks.keys.each { |k| count[k] += 1 }
+      }
+      count
+    end
+
     def get_word_counts(word)
       @freqs.fetch word, Hash.new(0)
     end
@@ -49,9 +57,8 @@ module Ankusa
       @total_doc_counts[klass] += count
     end
 
-    def doc_count_total(classes=nil)
-      classes ||= @total_doc_counts.keys
-      @total_doc_counts.select { |k,v| classes.include? k }.map { |k,v| v }.inject { |x,y| x+y }
+    def doc_count_totals
+      @total_doc_counts
     end
 
     def close

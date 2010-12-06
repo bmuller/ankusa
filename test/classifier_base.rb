@@ -18,14 +18,19 @@ module ClassifierBase
     assert_equal @storage.get_doc_count(:good), 2
     assert_equal @storage.get_total_word_count(:spam), 3
     assert_equal @storage.get_doc_count(:spam), 1
-    assert_equal @storage.doc_count_total, 3
-    assert_equal @storage.doc_count_total([:spam, :good]), 3
-    assert_equal @storage.doc_count_total([:spam]), 1
+    totals = @storage.doc_count_totals
+    assert_equal totals.values.inject { |x,y| x+y }, 3
+    assert_equal totals[:spam], 1
+    assert_equal totals[:good], 2
+
+    vocab = @storage.get_vocabulary_sizes
+    assert_equal vocab[:spam], 2
+    assert_equal vocab[:good], 3
   end
 
   def test_probs
-    spamlog = Math.exp(Math.log(3.0/4.0) + Math.log(1.0 / 4.0) + Math.log(2.0 / 5.0))
-    goodlog = Math.exp(Math.log(1.0 / 5.0) + Math.log(1.0 / 5.0) + Math.log(3.0 / 5.0))
+    spamlog = Math.exp(Math.log(3.0 / 5.0) + Math.log(1.0 / 5.0) + Math.log(2.0 / 5.0))
+    goodlog = Math.exp(Math.log(1.0 / 7.0) + Math.log(1.0 / 7.0) + Math.log(3.0 / 5.0))
     spam = spamlog / (spamlog + goodlog)
     good = goodlog / (spamlog + goodlog)
 
