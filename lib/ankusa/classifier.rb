@@ -62,13 +62,14 @@ module Ankusa
       
       # normalize to get probs
       sum = result.values.inject { |x,y| x+y }
-      @classnames.each { |k| result[k] = result[k] / sum }
+      classnames.each { |k| result[k] = result[k] / sum }
       result
     end
 
     protected
     def get_word_probs(word, classnames)
-      probs = @storage.get_word_counts(word)
+      probs = Hash.new 0
+      @storage.get_word_counts(word).each { |k,v| probs[k] = v if classnames.include? k }
       classnames.each { |cn| 
         # use a laplacian smoother
         probs[cn] = (probs[cn] + 1).to_f / (@storage.get_total_word_count(cn) + 1).to_f

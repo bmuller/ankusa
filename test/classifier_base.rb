@@ -19,6 +19,8 @@ module ClassifierBase
     assert_equal @storage.get_total_word_count(:spam), 3
     assert_equal @storage.get_doc_count(:spam), 1
     assert_equal @storage.doc_count_total, 3
+    assert_equal @storage.doc_count_total([:spam, :good]), 3
+    assert_equal @storage.doc_count_total([:spam]), 1
   end
 
   def test_probs
@@ -30,6 +32,11 @@ module ClassifierBase
     cs = @ankusa.classifications("spam is tastey")
     assert_equal cs[:spam], spam
     assert_equal cs[:good], good
+
+    @ankusa.train :somethingelse, "this is something else entirely spam"
+    cs = @ankusa.classifications("spam is tastey", [:spam, :good])
+    assert_equal cs[:spam], spam
+    assert_equal cs[:good], good    
   end
 
   def test_prob_result
