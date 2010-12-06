@@ -29,14 +29,24 @@ module ClassifierBase
   end
 
   def test_probs
-    spamlog = Math.exp(Math.log(3.0 / 5.0) + Math.log(1.0 / 5.0) + Math.log(2.0 / 5.0))
-    goodlog = Math.exp(Math.log(1.0 / 7.0) + Math.log(1.0 / 7.0) + Math.log(3.0 / 5.0))
-    spam = spamlog / (spamlog + goodlog)
-    good = goodlog / (spamlog + goodlog)
+    spamlog = Math.log(3.0 / 5.0) + Math.log(1.0 / 5.0) + Math.log(2.0 / 5.0)
+    goodlog = Math.log(1.0 / 7.0) + Math.log(1.0 / 7.0) + Math.log(3.0 / 5.0)
+
+    # exponentiate
+    spamex = Math.exp(spamlog)
+    goodex = Math.exp(goodlog)
+
+    # normalize
+    spam = spamex / (spamex + goodex)
+    good = goodex / (spamex + goodex)
 
     cs = @ankusa.classifications("spam is tastey")
     assert_equal cs[:spam], spam
     assert_equal cs[:good], good
+
+    cs = @ankusa.log_likelihoods("spam is tastey")
+    assert_equal cs[:spam], spamlog
+    assert_equal cs[:good], goodlog
 
     @ankusa.train :somethingelse, "this is something else entirely spam"
     cs = @ankusa.classifications("spam is tastey", [:spam, :good])

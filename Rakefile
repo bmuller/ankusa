@@ -22,11 +22,11 @@ Rake::TestTask.new("test") { |t|
 
 spec = Gem::Specification.new do |s|
   s.name = "ankusa"
-  s.version = "0.0.5"
+  s.version = "0.0.6"
   s.authors = ["Brian Muller"]
-  s.date = %q{2010-12-03}
-  s.description = "Naive Bayes classifier with HBase storage"
-  s.summary = "Naive Bayes classifier in Ruby that uses Hadoop's HBase for storage"
+  s.date = %q{2010-12-06}
+  s.description = "Text classifier with HBase storage"
+  s.summary = "Text classifier in Ruby that uses Hadoop's HBase for storage"
   s.email = "brian.muller@livingsocial.com"
   s.files = FileList["lib/**/*", "[A-Z]*", "Rakefile", "docs/**/*"]
   s.homepage = "https://github.com/livingsocial/ankusa"

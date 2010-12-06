@@ -1,6 +1,8 @@
 = ankusa
 
-Ankusa is a Naive Bayes classifier in Ruby that uses Hadoop's HBase for storage.  Because it uses HBase as a backend, the training corpus can be many terabytes in size.
+Ankusa is a text classifier in Ruby that uses Hadoop's HBase for storage.  Because it uses HBase as a backend, the training corpus can be many terabytes in size.
+
+Ankusa currently uses a Naive Bayes classifier.  It ignores common words (a.k.a, stop words) and stems all others.  Additionally, it uses Laplacian smoothing in the classification method.
 
 == Installation
 First, install HBase / Hadoop.  Make sure the HBase Thrift interface has been started as well.  Then:
@@ -15,6 +17,8 @@ First, install HBase / Hadoop.  Make sure the HBase Thrift interface has been st
   storage = Ankusa::HBaseStorage.new 'localhost'
   c = Ankusa::Classifier.new storage
 
+  # Each of these calls will return a bag-of-words
+  # has with stemmed words as keys and counts as values
   c.train :spam, "This is some spammy text"
   c.train :good, "This is not the bad stuff"
 
@@ -24,6 +28,11 @@ First, install HBase / Hadoop.  Make sure the HBase Thrift interface has been st
   # This will return Hash with classes as keys and 
   # membership probability as values
   puts c.classifications "This is some spammy text"
+
+  # If you have a large corpus, the probabilities will
+  # likely all be 0.  In that case, you must use log
+  # likelihood values
+  puts c.log_likelihoods "This is some spammy text"
 
   # get a list of all classes
   puts c.classes

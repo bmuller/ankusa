@@ -46,11 +46,24 @@ module Ankusa
 
     def classify(text, classes=nil)
       # return the most probable class
-      classifications(text, classes).sort_by { |c| -c[1] }.first.first
+      log_likelihoods(text, classes).sort_by { |c| -c[1] }.first.first
     end
     
     # Classes is an array of classes to look at
     def classifications(text, classnames=nil)
+      result = log_likelihoods text, classnames
+      result.keys.each { |k|
+        result[k] = Math.exp result[k] 
+      }
+
+      # normalize to get probs
+      sum = result.values.inject { |x,y| x+y }
+      result.keys.each { |k| result[k] = result[k] / sum }
+      result
+    end
+
+    # Classes is an array of classes to look at
+    def log_likelihoods(text, classnames=nil)
       classnames ||= @classnames
       result = Hash.new 0
 
@@ -64,12 +77,8 @@ module Ankusa
       doc_count_total = (doc_counts.inject { |x,y| x+y } + classnames.length).to_f
       classnames.each { |k| 
         result[k] += Math.log((@storage.get_doc_count(k) + 1).to_f / doc_count_total) 
-        result[k] = Math.exp(result[k])
       }
       
-      # normalize to get probs
-      sum = result.values.inject { |x,y| x+y }
-      classnames.each { |k| result[k] = result[k] / sum }
       result
     end
 
