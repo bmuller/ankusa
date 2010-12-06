@@ -83,10 +83,11 @@ module Ankusa
       @klass_doc_counts[klass] = summary_table.atomic_increment klass, "totals:doccount", count
     end
 
-    def doc_count_total
+    def doc_count_total(classes=nil)
       total = 0
+      classes = classes.map { |c| c.to_s } if not classes.nil?
       summary_table.create_scanner("", "totals:doccount") { |row|
-        total += row.columns["totals:doccount"].to_i64
+        total += row.columns["totals:doccount"].to_i64 if classes.nil? or classes.include? row.row
       }
       total
     end

@@ -22,17 +22,21 @@ module ClassifierBase
   end
 
   def test_probs
-    spamlog = Math.log(3.0/4.0) + Math.log(1.0 / 4.0) + Math.log(1.0 / 3.0)
-    goodlog = Math.log(1.0 / 5.0) + Math.log(1.0 / 5.0) + Math.log(2.0 / 3.0)
+    spamlog = Math.exp(Math.log(3.0/4.0) + Math.log(1.0 / 4.0) + Math.log(2.0 / 5.0))
+    goodlog = Math.exp(Math.log(1.0 / 5.0) + Math.log(1.0 / 5.0) + Math.log(3.0 / 5.0))
+    spam = spamlog / (spamlog + goodlog)
+    good = goodlog / (spamlog + goodlog)
 
     cs = @ankusa.classifications("spam is tastey")
-    assert_equal cs[:spam], spamlog
-    assert_equal cs[:good], goodlog
+    assert_equal cs[:spam], spam
+    assert_equal cs[:good], good
   end
 
   def test_prob_result
-    cs = @ankusa.classifications("spam is tastey").sort_by { |c| c[1] }.first.first
-    assert_equal cs, @ankusa.classify("spam is tastey")
+    cs = @ankusa.classifications("spam is tastey").sort_by { |c| -c[1] }.first.first
+    klass = @ankusa.classify("spam is tastey")
+    assert_equal cs, klass
+    assert_equal klass, :spam
   end
   
   def teardown

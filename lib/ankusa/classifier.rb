@@ -38,22 +38,25 @@ module Ankusa
       th
     end
 
-    def classify(text)
+    def classify(text, classes=nil)
       # return the most probable class
-      classifications(text).sort_by { |c| -c[1] }.first.first
+      classifications(text, classes).sort_by { |c| -c[1] }.first.first
     end
     
-    def classifications(text)
+    # Classes is an array of classes to look at
+    def classifications(text, classnames=nil)
+      classnames ||= @classnames
       result = Hash.new 0
 
       TextHash.new(text).each { |word, count|
-        probs = get_word_probs(word)
-        @classnames.each { |k| result[k] += (Math.log(probs[k]) * count) }
+        probs = get_word_probs(word, classnames)
+        classnames.each { |k| result[k] += (Math.log(probs[k]) * count) }
       }
 
       # add the prior and exponentiate
-      @classnames.each { |k| 
-        result[k] += Math.log(@storage.get_doc_count(k).to_f / @storage.doc_count_total.to_f) 
+      doc_count_total = (@storage.doc_count_total(classnames) + classnames.length).to_f
+      classnames.each { |k| 
+        result[k] += Math.log((@storage.get_doc_count(k) + 1).to_f / doc_count_total) 
         result[k] = Math.exp(result[k])
       }
       
@@ -64,9 +67,9 @@ module Ankusa
     end
 
     protected
-    def get_word_probs(word)
+    def get_word_probs(word, classnames)
       probs = @storage.get_word_counts(word)
-      @classnames.each { |cn| 
+      classnames.each { |cn| 
         # use a laplacian smoother
         probs[cn] = (probs[cn] + 1).to_f / (@storage.get_total_word_count(cn) + 1).to_f
       }

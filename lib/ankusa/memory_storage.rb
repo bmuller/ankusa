@@ -49,8 +49,9 @@ module Ankusa
       @total_doc_counts[klass] += count
     end
 
-    def doc_count_total
-      @total_doc_counts.values.inject { |x,y| x+y }
+    def doc_count_total(classes=nil)
+      classes ||= @total_doc_counts.keys
+      @total_doc_counts.select { |k,v| classes.include? k }.map { |k,v| v }.inject { |x,y| x+y }
     end
 
     def close
