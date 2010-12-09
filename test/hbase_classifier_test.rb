@@ -1,6 +1,6 @@
 require File.join File.dirname(__FILE__), 'classifier_base'
 
-class HBaseClassifierBase < Test::Unit::TestCase
+module HBaseClassifierBase 
   def initialize(name)
     @freq_tablename = "ankusa_word_frequencies_test"
     @sum_tablename = "ankusa_summary_test"    
@@ -11,10 +11,12 @@ class HBaseClassifierBase < Test::Unit::TestCase
   end
 end
 
-class NBClassifierTest < HBaseClassifierBase
+class NBClassifierTest < Test::Unit::TestCase
+  include HBaseClassifierBase
   include NBClassifierBase
 end
 
-class KLClassifierTest < HBaseClassifierBase
+class KLClassifierTest < Test::Unit::TestCase
+  include HBaseClassifierBase
   include KLClassifierBase
 end

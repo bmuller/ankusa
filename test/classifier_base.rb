@@ -91,21 +91,21 @@ module KLClassifierBase
 
     train_prob_spam = (2 + 1).to_f / (3 + 2).to_f
     train_prob_tastey = (0 + 1).to_f / (3 + 2).to_f
-    puts "train_prob_spam: #{train_prob_spam}, train prob tastey: #{train_prob_tastey}"
     dist = thprob_spam * Math.log(thprob_spam / train_prob_spam)
     dist += thprob_tastey * Math.log(thprob_tastey / train_prob_tastey)
-    #assert_equal ds[:spam], dist
-    assert_equal 1, 1
+    assert_equal ds[:spam], dist
 
-    train_prob_spam = 1.0 / 5.0
-    train_prob_tastey = 1.0 / 5.0
+    train_prob_spam = 1.0 / (4 + 3).to_f
+    train_prob_tastey = 1.0 / (4 + 3).to_f
     dist = thprob_spam * Math.log(thprob_spam / train_prob_spam)
     dist += thprob_tastey * Math.log(thprob_tastey / train_prob_tastey)
-    #assert_equal ds[:good], dist
-    assert_equal 1, 1
+    assert_equal ds[:good], dist
   end
 
-#  def test_distances_result
-#    assert_equal 1, 1
-#  end
+  def test_distances_result
+    cs = @classifier.distances("spam is tastey").sort_by { |c| c[1] }.first.first
+    klass = @classifier.classify("spam is tastey")
+    assert_equal cs, klass
+    assert_equal klass, :spam
+  end
 end

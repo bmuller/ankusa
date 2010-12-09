@@ -1,17 +1,19 @@
 require File.join File.dirname(__FILE__), 'classifier_base'
 
-class MemoryClassifierBase < Test::Unit::TestCase
+module MemoryClassifierBase
   def initialize(name)
     @storage = Ankusa::MemoryStorage.new
     super name
   end
 end
 
-class NBMemoryClassifierTest < MemoryClassifierBase
+class NBMemoryClassifierTest < Test::Unit::TestCase
+  include MemoryClassifierBase
   include NBClassifierBase
 end
 
 
-class KLMemoryClassifierTest < MemoryClassifierBase
+class KLMemoryClassifierTest < Test::Unit::TestCase
+  include MemoryClassifierBase
   include KLClassifierBase
 end

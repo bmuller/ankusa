@@ -48,12 +48,9 @@ module Ankusa
     def get_word_probs(word, classnames)
       probs = Hash.new 0
       @storage.get_word_counts(word).each { |k,v| probs[k] = v if classnames.include? k }
-      puts "word counts for [#{word}]:"
-      p @storage.get_word_counts(word)
       vs = vocab_sizes
       classnames.each { |cn| 
         # use a laplacian smoother
-        puts "[#{word}] probs[#{cn}] = (#{probs[cn]} + 1).to_f / (#{@storage.get_total_word_count(cn)} + #{vs[cn]}).to_f"
         probs[cn] = (probs[cn] + 1).to_f / (@storage.get_total_word_count(cn) + vs[cn]).to_f
       }
       probs
