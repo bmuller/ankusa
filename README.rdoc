@@ -2,7 +2,7 @@
 
 Ankusa is a text classifier in Ruby that uses Hadoop's HBase for storage.  Because it uses HBase as a backend, the training corpus can be many terabytes in size.
 
-Ankusa currently uses a Naive Bayes classifier.  It ignores common words (a.k.a, stop words) and stems all others.  Additionally, it uses Laplacian smoothing in the classification method.
+Ankusa currently provides both a Naive Bayes and Kullback–Leibler divergence classifier.  It ignores common words (a.k.a, stop words) and stems all others.  Additionally, it uses Laplacian smoothing in the classification method.
 
 == Installation
 First, install HBase / Hadoop.  Make sure the HBase Thrift interface has been started as well.  Then:
@@ -10,12 +10,14 @@ First, install HBase / Hadoop.  Make sure the HBase Thrift interface has been st
   gem install ankusa
 
 == Basic Usage
+Using the naive Bayes classifier:
+
   require 'rubygems'
   require 'ankusa'
 
   # connect to HBase 
   storage = Ankusa::HBaseStorage.new 'localhost'
-  c = Ankusa::Classifier.new storage
+  c = Ankusa::NaiveBayesClassifier.new storage
 
   # Each of these calls will return a bag-of-words
   # has with stemmed words as keys and counts as values
@@ -33,6 +35,37 @@ First, install HBase / Hadoop.  Make sure the HBase Thrift interface has been st
   # likely all be 0.  In that case, you must use log
   # likelihood values
   puts c.log_likelihoods "This is some spammy text"
+
+  # get a list of all classes
+  puts c.classes
+
+  # close connection
+  storage.close
+
+
+== KL Diverence Classifier
+There is a Kullback–Leibler divergence classifier as well.  KL divergence is a distance measure (though not a true metric because it does not satisfy the triangle inequality).  The KL classifier simply measures the relative entropy between the text you want to classify and each of the classes.  The class with the shortest "distance" is the best class.  You may find that for a especially large corpus it may be slightly faster to use this classifier (since prior probablities are never calculated, only likelihoods).
+
+The API is the same as the NaiveBayesClassifier, except rather than calling "classifications" if you want actual numbers you call "distances".  
+
+  require 'rubygems'
+  require 'ankusa'
+
+  # connect to HBase 
+  storage = Ankusa::HBaseStorage.new 'localhost'
+  c = Ankusa::KLDivergenceClassifier.new storage
+
+  # Each of these calls will return a bag-of-words
+  # has with stemmed words as keys and counts as values
+  c.train :spam, "This is some spammy text"
+  c.train :good, "This is not the bad stuff"
+
+  # This will return the most likely class (as symbol)
+  puts c.classify "This is some spammy text"
+
+  # This will return Hash with classes as keys and 
+  # distances >= 0 as values
+  puts c.distances "This is some spammy text"
 
   # get a list of all classes
   puts c.classes
