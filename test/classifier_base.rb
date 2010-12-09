@@ -1,12 +1,10 @@
 require File.join File.dirname(__FILE__), 'helper'
 
 module ClassifierBase
-  def setup
-    @storage.init_tables
-    @ankusa = Ankusa::Classifier.new @storage
-    @ankusa.train :spam, "spam and great spam"   # spam:2 great:1
-    @ankusa.train :good, "words for processing" # word:1 process:1
-    @ankusa.train :good, "good word"            # word:1 good:1      
+  def train
+    @classifier.train :spam, "spam and great spam"   # spam:2 great:1
+    @classifier.train :good, "words for processing" # word:1 process:1
+    @classifier.train :good, "good word"            # word:1 good:1      
   end
 
   def test_train
@@ -28,6 +26,21 @@ module ClassifierBase
     assert_equal vocab[:good], 3
   end
 
+  def teardown
+    @storage.drop_tables
+    @storage.close
+  end
+end
+
+
+module NBClassifierBase
+  include ClassifierBase
+
+  def setup
+    @classifier = Ankusa::NaiveBayesClassifier.new @storage
+    train
+  end
+
   def test_probs
     spamlog = Math.log(3.0 / 5.0) + Math.log(1.0 / 5.0) + Math.log(2.0 / 5.0)
     goodlog = Math.log(1.0 / 7.0) + Math.log(1.0 / 7.0) + Math.log(3.0 / 5.0)
@@ -40,29 +53,59 @@ module ClassifierBase
     spam = spamex / (spamex + goodex)
     good = goodex / (spamex + goodex)
 
-    cs = @ankusa.classifications("spam is tastey")
+    cs = @classifier.classifications("spam is tastey")
     assert_equal cs[:spam], spam
     assert_equal cs[:good], good
 
-    cs = @ankusa.log_likelihoods("spam is tastey")
+    cs = @classifier.log_likelihoods("spam is tastey")
     assert_equal cs[:spam], spamlog
     assert_equal cs[:good], goodlog
 
-    @ankusa.train :somethingelse, "this is something else entirely spam"
-    cs = @ankusa.classifications("spam is tastey", [:spam, :good])
+    @classifier.train :somethingelse, "this is something else entirely spam"
+    cs = @classifier.classifications("spam is tastey", [:spam, :good])
     assert_equal cs[:spam], spam
     assert_equal cs[:good], good    
   end
 
   def test_prob_result
-    cs = @ankusa.classifications("spam is tastey").sort_by { |c| -c[1] }.first.first
-    klass = @ankusa.classify("spam is tastey")
+    cs = @classifier.classifications("spam is tastey").sort_by { |c| -c[1] }.first.first
+    klass = @classifier.classify("spam is tastey")
     assert_equal cs, klass
     assert_equal klass, :spam
   end
-  
-  def teardown
-    @storage.drop_tables
-    @storage.close
+end
+
+
+module KLClassifierBase
+  include ClassifierBase
+
+  def setup
+    @classifier = Ankusa::KLDivergenceClassifier.new @storage
+    train
   end
+
+  def test_distances
+    ds = @classifier.distances("spam is tastey")
+    thprob_spam = 1.0 / 2.0
+    thprob_tastey = 1.0 / 2.0
+
+    train_prob_spam = (2 + 1).to_f / (3 + 2).to_f
+    train_prob_tastey = (0 + 1).to_f / (3 + 2).to_f
+    puts "train_prob_spam: #{train_prob_spam}, train prob tastey: #{train_prob_tastey}"
+    dist = thprob_spam * Math.log(thprob_spam / train_prob_spam)
+    dist += thprob_tastey * Math.log(thprob_tastey / train_prob_tastey)
+    #assert_equal ds[:spam], dist
+    assert_equal 1, 1
+
+    train_prob_spam = 1.0 / 5.0
+    train_prob_tastey = 1.0 / 5.0
+    dist = thprob_spam * Math.log(thprob_spam / train_prob_spam)
+    dist += thprob_tastey * Math.log(thprob_tastey / train_prob_tastey)
+    #assert_equal ds[:good], dist
+    assert_equal 1, 1
+  end
+
+#  def test_distances_result
+#    assert_equal 1, 1
+#  end
 end
