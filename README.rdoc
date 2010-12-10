@@ -37,7 +37,7 @@ Using the naive Bayes classifier:
   puts c.log_likelihoods "This is some spammy text"
 
   # get a list of all classes
-  puts c.classes
+  puts c.classnames
 
   # close connection
   storage.close
@@ -68,7 +68,7 @@ The API is the same as the NaiveBayesClassifier, except rather than calling "cla
   puts c.distances "This is some spammy text"
 
   # get a list of all classes
-  puts c.classes
+  puts c.classnames
 
   # close connection
   storage.close
