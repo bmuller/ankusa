@@ -18,10 +18,11 @@ module Ankusa
     # cassandra client doesn't support table scans. Using crufty get_range
     # method at the moment.
     #
-    def initialize(host='localhost', port=9160, max_classes = 100)
-      @cassandra  = Cassandra.new('ankusa', "#{host}:#{port}")
+    def initialize(host='localhost', port=9160, keyspace = 'ankusa', max_classes = 100)
+      @cassandra  = Cassandra.new('system', "#{host}:#{port}")
       @klass_word_counts = {}
-      @klass_doc_counts = {}
+      @klass_doc_counts  = {}
+      @keyspace    = keyspace
       @max_classes = max_classes
       init_tables
     end
@@ -47,7 +48,8 @@ module Ankusa
     # FIXME: truncate doesn't work with cassandra-beta2
     #
     def drop_tables
-      # @cassandra.truncate!('ankusa')
+      @cassandra.truncate!('classes')
+      @cassandra.truncate!('totals')
       @klass_word_counts = {}
       @klass_doc_counts  = {}
     end
@@ -57,11 +59,22 @@ module Ankusa
     # Create required keyspace and column families
     #
     def init_tables
-      freq_table    = Cassandra::ColumnFamily.new({:keyspace => 'ankusa', :name => "classes"}) # word  => {classname => count}
-      summary_table = Cassandra::ColumnFamily.new({:keyspace => 'ankusa', :name => "totals"})  # class => {wordcount => count}
-
-      @cassandra.add_column_family freq_table
-      @cassandra.add_column_family summary_table
+      # Do nothing if keyspace already exists
+      if @cassandra.keyspaces.include?(@keyspace)
+        @cassandra.keyspace = @keyspace
+        return
+      else
+        freq_table    = Cassandra::ColumnFamily.new({:keyspace => @keyspace, :name => "classes"}) # word  => {classname => count}
+        summary_table = Cassandra::ColumnFamily.new({:keyspace => @keyspace, :name => "totals"})  # class => {wordcount => count}
+        ks_def = Cassandra::Keyspace.new({
+            :name               => @keyspace,
+            :strategy_class     => 'org.apache.cassandra.locator.SimpleStrategy',
+            :replication_factor => 1,
+            :cf_defs            => [freq_table, summary_table] 
+          })
+        @cassandra.add_keyspace ks_def
+        @cassandra.keyspace = @keyspace
+      end
     end
 
     #
@@ -72,7 +85,7 @@ module Ankusa
       # fetch all (class,count) pairs for a given word
       row = @cassandra.get(:classes, word.to_s)
       return row.to_hash if row.empty?
-      row.inject({}){|counts, col| counts[col.first] = [col.last.to_f,0].max; counts}
+      row.inject({}){|counts, col| counts[col.first.to_sym] = [col.last.to_f,0].max; counts}
     end
 
     #
