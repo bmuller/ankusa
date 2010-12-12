@@ -5,7 +5,7 @@ require 'cassandra/0.7'
 #
 # create keyspace ankusa with replication_factor = 1
 #
-# from the cassandra-cli. This should be fixed with new release canditate for
+# from the cassandra-cli. This should be fixed with new release candidate for
 # cassandra
 #
 module Ankusa
@@ -18,7 +18,7 @@ module Ankusa
     # cassandra client doesn't support table scans. Using crufty get_range
     # method at the moment.
     #
-    def initialize(host='localhost', port=9160, keyspace = 'ankusa', max_classes = 100)
+    def initialize(host='127.0.0.1', port=9160, keyspace = 'ankusa', max_classes = 100)
       @cassandra  = Cassandra.new('system', "#{host}:#{port}")
       @klass_word_counts = {}
       @klass_doc_counts  = {}
@@ -50,6 +50,7 @@ module Ankusa
     def drop_tables
       @cassandra.truncate!('classes')
       @cassandra.truncate!('totals')
+      @cassandra.drop_keyspace(@keyspace)
       @klass_word_counts = {}
       @klass_doc_counts  = {}
     end
@@ -62,7 +63,6 @@ module Ankusa
       # Do nothing if keyspace already exists
       if @cassandra.keyspaces.include?(@keyspace)
         @cassandra.keyspace = @keyspace
-        return
       else
         freq_table    = Cassandra::ColumnFamily.new({:keyspace => @keyspace, :name => "classes"}) # word  => {classname => count}
         summary_table = Cassandra::ColumnFamily.new({:keyspace => @keyspace, :name => "totals"})  # class => {wordcount => count}

@@ -1,11 +1,11 @@
 = ankusa
 
-Ankusa is a text classifier in Ruby that uses Hadoop's HBase for storage.  Because it uses HBase as a backend, the training corpus can be many terabytes in size.
+Ankusa is a text classifier in Ruby that can use either Hadoop's HBase or Cassandra for storage.  Because it uses HBase or Cassandra as a backend, the training corpus can be many terabytes in size.
 
 Ankusa currently provides both a Naive Bayes and Kullback–Leibler divergence classifier.  It ignores common words (a.k.a, stop words) and stems all others.  Additionally, it uses Laplacian smoothing in the classification method.
 
 == Installation
-First, install HBase / Hadoop.  Make sure the HBase Thrift interface has been started as well.  Then:
+First, install HBase/Hadoop or Cassandra.  If you're using HBase, make sure the HBase Thrift interface has been started as well.  Then:
 
   gem install ankusa
 
@@ -14,6 +14,7 @@ Using the naive Bayes classifier:
 
   require 'rubygems'
   require 'ankusa'
+  require 'ankusa/hbase_storage'
 
   # connect to HBase 
   storage = Ankusa::HBaseStorage.new 'localhost'
@@ -50,6 +51,7 @@ The API is the same as the NaiveBayesClassifier, except rather than calling "cla
 
   require 'rubygems'
   require 'ankusa'
+  require 'ankusa/hbase_storage'
 
   # connect to HBase 
   storage = Ankusa::HBaseStorage.new 'localhost'
@@ -72,3 +74,39 @@ The API is the same as the NaiveBayesClassifier, except rather than calling "cla
 
   # close connection
   storage.close
+
+== Storage Methods
+Ankusa has a generalized storage interface that has been implemented for HBase, Cassandra, and in-memory storage.
+
+Memory storage can be used when you have a very small corpora
+  require 'ankusa/memory_storage'
+  storage = Ankusa::MemoryStorage.new
+
+HBase storage:
+  require 'ankusa/hbase_storage'
+  # defaults: host='localhost', port=9090, frequency_tablename="ankusa_word_frequencies", summary_tablename="ankusa_summary"
+  storage = Ankusa::HBaseStorage.new host, port, frequency_tablename, summary_tablename
+
+For Cassandra storage:
+ * You will need Cassandra version 0.7.0-rc2 or greater.
+ * You will need to set a max number classes since current implementation of the Ruby Cassandra client doesn't support table scans.  
+ * Prior to using the Cassandra storage you will need to run the following command from the cassandra-cli.  This should be fixed with a new release candidate for cassandra.
+  create keyspace ankusa with replication_factor = 1
+
+To use the Cassandra storage class:
+  require 'ankusa/cassandra_storage'
+  # defaults: host='127.0.0.1', port=9160, keyspace = 'ankusa', max_classes = 100
+  storage = Ankusa::HBaseStorage.new host, port, keyspace, max_classes
+
+
+== Running Tests
+You can run the tests for any of the three storage methods.  For instance, for memory storage:
+  rake test_memory
+
+For the other methods you will need to edit the file test/config.yml and set the configuration params.  Then:
+  rake test_hbase
+  # or
+  rake test_cassandra
+
+
+

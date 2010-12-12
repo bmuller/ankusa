@@ -1,4 +1,4 @@
-hbase_host: b63
+hbase_host: 127.0.0.1
 hbase_port: 9090
-cassandra_host: 192.168.1.119
+cassandra_host: 127.0.0.1
 cassandra_port: 9160

@@ -12,28 +12,40 @@ Rake::RDocTask.new("doc") { |rdoc|
   rdoc.rdoc_files.include('lib/**/*.rb')
 }
 
-# Run the unit tests
-desc "Run all unit tests"
-Rake::TestTask.new("test") { |t|
+desc "Run all unit tests with memory storage"
+Rake::TestTask.new("test_memory") { |t|
   t.libs << "lib"
-  t.test_files = FileList['test/*_test.rb']
+  t.test_files = FileList['test/hasher_test.rb', 'test/memory_classifier_test.rb']
+  t.verbose = true
+}
+
+desc "Run all unit tests with HBase storage"
+Rake::TestTask.new("test_hbase") { |t|
+  t.libs << "lib"
+  t.test_files = FileList['test/hasher_test.rb', 'test/memory_hbase_test.rb']
+  t.verbose = true
+}
+
+desc "Run all unit tests with Cassandra storage"
+Rake::TestTask.new("test_cassandra") { |t|
+  t.libs << "lib"
+  t.test_files = FileList['test/hasher_test.rb', 'test/cassandra_classifier_test.rb']
   t.verbose = true
 }
 
 spec = Gem::Specification.new do |s|
   s.name = "ankusa"
-  s.version = "0.0.6"
+  s.version = "0.0.7"
   s.authors = ["Brian Muller"]
-  s.date = %q{2010-12-06}
-  s.description = "Text classifier with HBase storage"
-  s.summary = "Text classifier in Ruby that uses Hadoop's HBase for storage"
+  s.date = %q{2010-12-12}
+  s.description = "Text classifier with HBase or Cassandra storage"
+  s.summary = "Text classifier in Ruby that uses Hadoop's HBase or Cassandra for storage"
   s.email = "brian.muller@livingsocial.com"
   s.files = FileList["lib/**/*", "[A-Z]*", "Rakefile", "docs/**/*"]
   s.homepage = "https://github.com/livingsocial/ankusa"
   s.require_paths = ["lib"]
-  s.rubygems_version = "1.3.5"
-  s.add_dependency('hbaserb', '>= 0.0.3')
   s.add_dependency('fast-stemmer', '>= 1.0.0')
+  s.requirements << "Either hbaserb >= 0.0.3 or cassandra >= 0.7"
 end
 
 Rake::GemPackageTask.new(spec) do |pkg|

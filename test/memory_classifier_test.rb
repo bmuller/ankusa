@@ -1,4 +1,5 @@
 require File.join File.dirname(__FILE__), 'classifier_base'
+require 'ankusa/memory_storage'
 
 module MemoryClassifierBase
   def initialize(name)

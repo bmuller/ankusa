@@ -1,4 +1,5 @@
 require File.join File.dirname(__FILE__), 'classifier_base'
+require 'ankusa/hbase_storage'
 
 module HBaseClassifierBase 
   def initialize(name)
