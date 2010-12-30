@@ -86,6 +86,15 @@ Memory storage can be used when you have a very small corpora
   require 'ankusa/memory_storage'
   storage = Ankusa::MemoryStorage.new
 
+FileSystem storage can be used when you have a very small corpora and want to persist the classification results.
+  require 'ankusa/file_system_storage'
+  storage = Ankusa::FileSystemStorage.new '/path/to/file'
+  # Do classification ...
+  storage.save
+
+For FileSystem storage:
+* The filesystem storage does NOT save to the filesystem automatically, the #save method must be invoked to save and persist the results
+
 HBase storage:
   require 'ankusa/hbase_storage'
   # defaults: host='localhost', port=9090, frequency_tablename="ankusa_word_frequencies", summary_tablename="ankusa_summary"
@@ -103,13 +112,15 @@ To use the Cassandra storage class:
 
 
 == Running Tests
-You can run the tests for any of the three storage methods.  For instance, for memory storage:
+You can run the tests for any of the four storage methods.  For instance, for memory storage:
   rake test_memory
 
 For the other methods you will need to edit the file test/config.yml and set the configuration params.  Then:
   rake test_hbase
   # or
   rake test_cassandra
+  # or
+  rake test_filesystem
 
 
 

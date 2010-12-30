@@ -33,6 +33,13 @@ Rake::TestTask.new("test_cassandra") { |t|
   t.verbose = true
 }
 
+desc "Run all unit tests with FileSystem storage"
+Rake::TestTask.new("test_filesystem") { |t|
+  t.libs << "lib"
+  t.test_files = FileList['test/hasher_test.rb', 'test/file_system_classifier_test.rb']
+  t.verbose = true
+}
+
 spec = Gem::Specification.new do |s|
   s.name = "ankusa"
   s.version = "0.0.7"
