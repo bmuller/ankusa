@@ -1,6 +1,6 @@
 = ankusa
 
-Ankusa is a text classifier in Ruby that can use either Hadoop's HBase or Cassandra for storage.  Because it uses HBase or Cassandra as a backend, the training corpus can be many terabytes in size.
+Ankusa is a text classifier in Ruby that can use either Hadoop's HBase or Cassandra for storage.  Because it uses HBase or Cassandra as a backend, the training corpus can be many terabytes in size (though additional memory and filesystem storage abilities also exist for smaller corpora).
 
 Ankusa currently provides both a Naive Bayes and Kullback-Leibler divergence classifier.  It ignores common words (a.k.a, stop words) and stems all others.  Additionally, it uses Laplacian smoothing in both classification methods.
 

@@ -6,6 +6,13 @@ module FileSystemClassifierBase
     @storage = Ankusa::FileSystemStorage.new CONFIG['file_system_storage_file']
     super name
   end
+
+  def test_storage
+    # train will be called in setup method, now reload storage and test training
+    @storage.save
+    @storage = Ankusa::FileSystemStorage.new CONFIG['file_system_storage_file']
+    test_train
+  end
 end
 
 class NBMemoryClassifierTest < Test::Unit::TestCase
