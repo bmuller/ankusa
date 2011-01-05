@@ -42,9 +42,9 @@ Rake::TestTask.new("test_filesystem") { |t|
 
 spec = Gem::Specification.new do |s|
   s.name = "ankusa"
-  s.version = "0.0.7"
+  s.version = "0.0.8"
   s.authors = ["Brian Muller"]
-  s.date = %q{2010-12-12}
+  s.date = %q{2011-01-05}
   s.description = "Text classifier with HBase or Cassandra storage"
   s.summary = "Text classifier in Ruby that uses Hadoop's HBase or Cassandra for storage"
   s.email = "brian.muller@livingsocial.com"
