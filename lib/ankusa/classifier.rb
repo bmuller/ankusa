@@ -50,6 +50,9 @@ module Ankusa
       @storage.get_word_counts(word).each { |k,v| probs[k] = v if classnames.include? k }
       vs = vocab_sizes
       classnames.each { |cn| 
+        # if we've never seen the class, the word prob is 0
+        next if not vs.has_key? cn
+
         # use a laplacian smoother
         probs[cn] = (probs[cn] + 1).to_f / (@storage.get_total_word_count(cn) + vs[cn]).to_f
       }

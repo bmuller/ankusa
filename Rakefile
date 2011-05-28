@@ -1,12 +1,13 @@
 require 'rubygems'
-require 'rake'
+require 'bundler'
 require 'rake/testtask'
 require 'rake/rdoctask'
-require 'rake/gempackagetask'
+
+Bundler::GemHelper.install_tasks
 
 desc "Create documentation"
 Rake::RDocTask.new("doc") { |rdoc|
-  rdoc.title = "HBaseRb - Naive Bayes classifier with HBase storage"
+  rdoc.title = "Ankusa - Naive Bayes classifier with big data storage"
   rdoc.rdoc_dir = 'docs'
   rdoc.rdoc_files.include('README.rdoc')
   rdoc.rdoc_files.include('lib/**/*.rb')
@@ -39,26 +40,3 @@ Rake::TestTask.new("test_filesystem") { |t|
   t.test_files = FileList['test/hasher_test.rb', 'test/file_system_classifier_test.rb']
   t.verbose = true
 }
-
-spec = Gem::Specification.new do |s|
-  s.name = "ankusa"
-  s.version = "0.0.8"
-  s.authors = ["Brian Muller"]
-  s.date = %q{2011-01-05}
-  s.description = "Text classifier with HBase or Cassandra storage"
-  s.summary = "Text classifier in Ruby that uses Hadoop's HBase or Cassandra for storage"
-  s.email = "brian.muller@livingsocial.com"
-  s.files = FileList["lib/**/*", "[A-Z]*", "Rakefile", "docs/**/*"]
-  s.homepage = "https://github.com/livingsocial/ankusa"
-  s.require_paths = ["lib"]
-  s.add_dependency('fast-stemmer', '>= 1.0.0')
-  s.requirements << "Either hbaserb >= 0.0.3 or cassandra >= 0.7"
-end
-
-Rake::GemPackageTask.new(spec) do |pkg|
-  pkg.need_zip = true
-  pkg.need_tar = true
-end
-
-desc "Default task: builds gem and runs tests"
-task :default => [ :gem, :test ]

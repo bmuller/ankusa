@@ -65,6 +65,10 @@ module NBClassifierBase
     cs = @classifier.classifications("spam is tastey", [:spam, :good])
     assert_equal cs[:spam], spam
     assert_equal cs[:good], good    
+
+    # test for class we didn't train on
+    cs = @classifier.classifications("spam is super tastey if you are a zombie", [:spam, :nothing])
+    assert_equal cs[:nothing], 0
   end
 
   def test_prob_result
@@ -107,5 +111,9 @@ module KLClassifierBase
     klass = @classifier.classify("spam is tastey")
     assert_equal cs, klass
     assert_equal klass, :spam
+
+    # assert distance from class we didn't train with is Infinity (1.0/0.0 is a way to get at Infinity)
+    cs = @classifier.distances("spam is tastey", [:spam, :nothing])
+    assert_equal cs[:nothing], (1.0/0.0)
   end
 end

@@ -20,7 +20,8 @@ Using the naive Bayes classifier:
   require 'ankusa'
   require 'ankusa/hbase_storage'
 
-  # connect to HBase 
+  # connect to HBase.  Alternatively, just for this test, use in memory storage with
+  # storage = Ankusa::MemoryStorage.new
   storage = Ankusa::HBaseStorage.new 'localhost'
   c = Ankusa::NaiveBayesClassifier.new storage
 
