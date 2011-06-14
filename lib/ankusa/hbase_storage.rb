@@ -37,11 +37,11 @@ module Ankusa
     end
 
     def init_tables
-      if not @hbase.has_table? @ftablename
+      unless @hbase.has_table? @ftablename
         @hbase.create_table @ftablename, "classes", "total"
       end
 
-      if not @hbase.has_table? @stablename
+      unless @hbase.has_table? @stablename
         @hbase.create_table @stablename, "totals"
       end
     end
