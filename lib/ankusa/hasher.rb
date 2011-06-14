@@ -9,11 +9,12 @@ module Ankusa
     def initialize(text=nil)
       super 0
       @word_count = 0
-      add_text(text) if not text.nil?
+      add_text(text) unless text.nil?
     end
 
     def add_text(text)
-      if text.kind_of? Array
+      #nb - duck typing the method just need to respond to each
+      if text.respond_to? :each
         text.each { |t| add_text t }
       else
         # replace dashes with spaces, then get rid of non-word/non-space characters, 
@@ -31,7 +32,7 @@ module Ankusa
     end
 
     def self.atomize(text)
-      text.to_ascii.tr('-', ' ').gsub(/[^\w\s]/," ").split.map { |w| w.downcase }
+      text.downcase.to_ascii.tr('-', ' ').gsub(/[^\w\s]/," ").split
     end
 
     # word should be only alphanum chars at this point
