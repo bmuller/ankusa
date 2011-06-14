@@ -20,7 +20,7 @@ module Ankusa
       @storage.incr_total_word_count klass, th.word_count
       doccount = (text.kind_of? Array) ? text.length : 1
       @storage.incr_doc_count klass, doccount
-      @classnames << klass if not @classnames.include? klass
+      @classnames << klass unless @classnames.include? klass
       # cache is now dirty of these vars
       @doc_count_totals = nil
       @vocab_sizes = nil
@@ -51,7 +51,7 @@ module Ankusa
       vs = vocab_sizes
       classnames.each { |cn| 
         # if we've never seen the class, the word prob is 0
-        next if not vs.has_key? cn
+        next unless vs.has_key? cn
 
         # use a laplacian smoother
         probs[cn] = (probs[cn] + 1).to_f / (@storage.get_total_word_count(cn) + vs[cn]).to_f
