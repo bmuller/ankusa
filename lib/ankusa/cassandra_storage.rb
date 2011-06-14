@@ -20,8 +20,7 @@ module Ankusa
     #
     def initialize(host='127.0.0.1', port=9160, keyspace = 'ankusa', max_classes = 100)
       @cassandra  = Cassandra.new('system', "#{host}:#{port}")
-      @klass_word_counts = {}
-      @klass_doc_counts  = {}
+      @klass_word_counts, @klass_doc_counts = {}
       @keyspace    = keyspace
       @max_classes = max_classes
       init_tables
@@ -51,8 +50,7 @@ module Ankusa
       @cassandra.truncate!('classes')
       @cassandra.truncate!('totals')
       @cassandra.drop_keyspace(@keyspace)
-      @klass_word_counts = {}
-      @klass_doc_counts  = {}
+      @klass_word_counts, @klass_doc_counts = {}
     end
 
 
