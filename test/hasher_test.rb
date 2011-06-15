@@ -22,8 +22,4 @@ class HasherTest < Test::Unit::TestCase
     assert Ankusa::TextHash.valid_word? "mother"
     assert Ankusa::TextHash.valid_word? "21675"
   end
-
-  def teardown
-    @text_hash, @array = nil
-  end
 end
