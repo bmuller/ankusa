@@ -42,10 +42,62 @@ module Ankusa
     end
 
     def incr_word_count(klass, word, count)
-      freq_table[word][klass] ||= 0
-      freq_table[word][klass] += count
+      word_doc = freq_table.find_one(word: word)
+      if word_doc
+        freq_table.update({'_id' => word_doc['_id'] }, { '$inc' => {klass => count} })
+      else
+        freq_table.insert(word: word, klass: count)
+        #TODO: increment if it's new decrement if final count == 0
+        increment_summary_klass(klass, 'vocabulary_size', 1)
+      end
     end
 
+    def incr_total_word_count(klass, count)
+      increment_summary_klass(klass, 'word_count', count)
+    end
+
+    def incr_doc_count(klass, count)
+      increment_summary_klass(klass, 'doc_count', count)
+    end
+
+    def get_word_counts(word)
+      counts = Hash.new(0)
+
+      word_doc = freq_table.find_one({word: word})
+      counts.merge!(word_doc) if word_doc
+
+      counts
+    end
+
+    def get_total_word_count(klass)
+      klass_doc = summary_table.find_one(klass: klass)
+      klass_doc ? klass_doc['word_count'].to_f : 0.0
+    end
+
+    def doc_count_totals
+      count = Hash.new(0)
+
+      summary_table.find.each do |doc|
+        count[ doc['klass'] ] = doc['doc_count']
+      end
+
+      count
+    end
+
+    def get_vocabulary_sizes
+      count = Hash.new(0)
+
+      summary_table.find.each do |doc|
+        count[ doc['klass'] ] = doc['vocabulary_size']
+      end
+
+      count
+    end
+
+    def get_doc_count(klass)
+      klass_doc = summary_table.find_one(klass: klass) 
+      klass_doc ? klass_doc['doc_count'].to_f : 0.0
+    end
 
     private
     def summary_table
@@ -56,6 +108,14 @@ module Ankusa
       @ftable ||= @db[@ftablename]
     end
 
+    def increment_summary_klass(klass, field, count)
+      klass_doc = summary_table.find_one(klass: klass)
+      if klass_doc
+        summary_table.update({'_id' => klass_doc['_id'] }, { '$inc' => {field => count} })
+      else
+        summary_table.insert(klass: klass, field => count)
+      end
+    end
 
   end
 end
