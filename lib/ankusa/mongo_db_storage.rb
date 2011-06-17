@@ -99,6 +99,9 @@ module Ankusa
       klass_doc ? klass_doc['doc_count'].to_f : 0.0
     end
 
+    def close
+    end
+
     private
     def summary_table
       @stable ||= @db[@stablename]
