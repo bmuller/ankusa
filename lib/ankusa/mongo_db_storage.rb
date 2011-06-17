@@ -42,11 +42,11 @@ module Ankusa
     end
 
     def incr_word_count(klass, word, count)
-      word_doc = freq_table.find_one(word => word)
+      word_doc = freq_table.find_one(:word => word)
       if word_doc
         freq_table.update({'_id' => word_doc['_id'] }, { '$inc' => {klass => count} })
       else
-        freq_table.insert(word => word, klass => count)
+        freq_table.insert(:word => word, klass => count)
         #TODO: increment if it's new decrement if final count == 0
         increment_summary_klass(klass, 'vocabulary_size', 1)
       end
@@ -63,14 +63,14 @@ module Ankusa
     def get_word_counts(word)
       counts = Hash.new(0)
 
-      word_doc = freq_table.find_one({word => word})
+      word_doc = freq_table.find_one({:word => word})
       counts.merge!(word_doc) if word_doc
 
       counts
     end
 
     def get_total_word_count(klass)
-      klass_doc = summary_table.find_one(klass => klass)
+      klass_doc = summary_table.find_one(:klass => klass)
       klass_doc ? klass_doc['word_count'].to_f : 0.0
     end
 
@@ -95,7 +95,7 @@ module Ankusa
     end
 
     def get_doc_count(klass)
-      klass_doc = summary_table.find_one(klass => klass) 
+      klass_doc = summary_table.find_one(:klass => klass) 
       klass_doc ? klass_doc['doc_count'].to_f : 0.0
     end
 
@@ -112,11 +112,11 @@ module Ankusa
     end
 
     def increment_summary_klass(klass, field, count)
-      klass_doc = summary_table.find_one(klass => klass)
+      klass_doc = summary_table.find_one(:klass => klass)
       if klass_doc
         summary_table.update({'_id' => klass_doc['_id'] }, { '$inc' => {field => count} })
       else
-        summary_table.insert(klass => klass, field => count)
+        summary_table.insert(:klass => klass, field => count)
       end
     end
 
