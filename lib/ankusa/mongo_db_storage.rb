@@ -64,7 +64,12 @@ module Ankusa
       counts = Hash.new(0)
 
       word_doc = freq_table.find_one({:word => word})
-      counts.merge!(word_doc) if word_doc
+      if word_doc
+        word_doc.delete("_id")
+        word_doc.delete("word")
+        #convert keys to symbols 
+        counts.merge!(word_doc.inject({}){|h, (k, v)| h[(k.to_sym rescue k) || k] = v; h}) 
+      end
 
       counts
     end
