@@ -23,7 +23,9 @@ module Ankusa
 
     def init_tables
       @db.create_collection(@ftablename) unless @db.collection_names.include?(@ftablename)
+      freq_table.create_index('word')
       @db.create_collection(@stablename) unless @db.collection_names.include?(@stablename)
+      summary_table.create_index('klass')
     end
 
     def drop_tables
