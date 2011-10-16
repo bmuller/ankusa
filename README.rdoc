@@ -110,6 +110,13 @@ To use the Cassandra storage class:
   # defaults: host='127.0.0.1', port=9160, keyspace = 'ankusa', max_classes = 100
   storage = Ankusa::HBaseStorage.new host, port, keyspace, max_classes
 
+For MongoDB storage:
+  require 'ankusa/mongo_db_storage'
+  storage = Ankusa::MongoDbStorage.new :host => "localhost", :port => 27017, :db => "ankusa"
+  # defaults: :host => "localhost", :port => 27017, :db => "ankusa"
+  # no default username or password
+  # tou can also use frequency_tablename and summary_tablename options
+
 
 == Running Tests
 You can run the tests for any of the four storage methods.  For instance, for memory storage:
@@ -121,6 +128,8 @@ For the other methods you will need to edit the file test/config.yml and set the
   rake test_cassandra
   # or
   rake test_filesystem
+  #or
+  rake test_mongo_db
 
 
 
