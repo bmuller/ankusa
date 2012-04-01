@@ -6,9 +6,10 @@ module Ankusa
   class TextHash < Hash 
     attr_reader :word_count
 
-    def initialize(text=nil)
+    def initialize(text=nil, stem=true)
       super 0
       @word_count = 0
+      @stem = stem
       add_text(text) unless text.nil?
     end
 
@@ -37,7 +38,8 @@ module Ankusa
 
     def add_word(word)
       @word_count += 1
-      key = word.stem.intern
+      word = word.stem if @stem
+      key = word.intern
       store key, fetch(key, 0)+1
     end
   end
