@@ -19,7 +19,7 @@ module Ankusa
 
     # word should be only alphanum chars at this point
     def self.valid_word?(word)
-      return true unless Ankusa::STOPWORDS.include? word || word.length < 3 || word.numeric?
+      not (Ankusa::STOPWORDS.include?(word) || word.length < 3 || word.numeric?)
     end
 
     def add_text(text)
