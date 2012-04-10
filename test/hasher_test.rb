@@ -16,10 +16,10 @@ class HasherTest < Test::Unit::TestCase
   end
 
   def test_valid_word
-    assert_nil Ankusa::TextHash.valid_word? "accordingly"
-    assert_nil Ankusa::TextHash.valid_word? "appropriate"
+    assert (not Ankusa::TextHash.valid_word? "accordingly")
+    assert (not Ankusa::TextHash.valid_word? "appropriate")
     assert Ankusa::TextHash.valid_word? "^*&@"
     assert Ankusa::TextHash.valid_word? "mother"
-    assert Ankusa::TextHash.valid_word? "21675"
+    assert (not Ankusa::TextHash.valid_word? "21675")
   end
 end
