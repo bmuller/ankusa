@@ -40,3 +40,10 @@ Rake::TestTask.new("test_filesystem") { |t|
   t.test_files = FileList['test/hasher_test.rb', 'test/file_system_classifier_test.rb']
   t.verbose = true
 }
+
+desc "Run all unit tests with MongoDb storage"
+Rake::TestTask.new("test_mongo_db") { |t|
+  t.libs << "lib"
+  t.test_files = FileList['test/hasher_test.rb', 'test/mongo_db_classifier_test.rb']
+  t.verbose = true
+}

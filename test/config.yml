@@ -2,4 +2,6 @@ hbase_host: 127.0.0.1
 hbase_port: 9090
 cassandra_host: 127.0.0.1
 cassandra_port: 9160
+mongo_db_host: 127.0.0.1
+mongo_db_port: 27017
 file_system_storage_file: training.anuska
