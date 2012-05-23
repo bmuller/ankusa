@@ -1,14 +1,16 @@
 = ankusa
 
-Ankusa is a text classifier in Ruby that can use either Hadoop's HBase or Cassandra for storage.  Because it uses HBase or Cassandra as a backend, the training corpus can be many terabytes in size (though additional memory and single file storage abilities also exist for smaller corpora).
+Ankusa is a text classifier in Ruby that can use either Hadoop's HBase, Mongo, or Cassandra for storage.  Because it uses HBase/Mongo/Cassandra as a backend, the training corpus can be many terabytes in size (though additional memory and single file storage abilities also exist for smaller corpora).
 
 Ankusa currently provides both a Naive Bayes and Kullback-Leibler divergence classifier.  It ignores common words (a.k.a, stop words) and stems all others.  Additionally, it uses Laplacian smoothing in both classification methods.
 
 == Installation
-First, install HBase/Hadoop or Cassandra (>= 0.7.0-rc2).  Then, install the appropriate gem:
+First, install HBase/Hadoop, Mongo, or Cassandra (>= 0.7.0-rc2).  Then, install the appropriate gem:
   gem install hbaserb
   # or
   gem install cassandra
+  # or 
+  gem install mongo
 
 If you're using HBase, make sure the HBase Thrift interface has been started as well.  Then:
   gem install ankusa
@@ -81,7 +83,7 @@ The API is the same as the NaiveBayesClassifier, except rather than calling "cla
   storage.close
 
 == Storage Methods
-Ankusa has a generalized storage interface that has been implemented for HBase, Cassandra, single file, and in-memory storage.
+Ankusa has a generalized storage interface that has been implemented for HBase, Cassandra, Mongo, single file, and in-memory storage.
 
 Memory storage can be used when you have a very small corpora
   require 'ankusa/memory_storage'
