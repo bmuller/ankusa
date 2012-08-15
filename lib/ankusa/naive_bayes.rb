@@ -13,7 +13,7 @@ module Ankusa
     def classifications(text, classnames=nil)
       result = log_likelihoods text, classnames
       result.keys.each { |k|
-        result[k] = (result[k] == INFTY) ? 0 : Math.exp(result[k])
+        result[k] = (result[k] == -INFTY) ? 0 : Math.exp(result[k])
       }
 
       # normalize to get probs
@@ -30,8 +30,8 @@ module Ankusa
       TextHash.new(text).each { |word, count|
         probs = get_word_probs(word, classnames)
         classnames.each { |k| 
-          # log likelihood should be infinity if we've never seen the klass
-          result[k] += probs[k] > 0 ? (Math.log(probs[k]) * count) : INFTY
+          # log likelihood should be negative infinity if we've never seen the klass
+          result[k] += probs[k] > 0 ? (Math.log(probs[k]) * count) : -INFTY
         }
       }
 

@@ -1,0 +1,16 @@
+PATH
+  remote: .
+  specs:
+    ankusa (0.0.14)
+      fast-stemmer (>= 1.0.0)
+
+GEM
+  remote: http://rubygems.org/
+  specs:
+    fast-stemmer (1.0.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  ankusa!

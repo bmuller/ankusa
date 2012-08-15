@@ -15,35 +15,35 @@ RDoc::Task.new("doc") { |rdoc|
 
 desc "Run all unit tests with memory storage"
 Rake::TestTask.new("test_memory") { |t|
-  t.libs << "lib"
+  t.libs += ["lib", "."]
   t.test_files = FileList['test/hasher_test.rb', 'test/memory_classifier_test.rb']
   t.verbose = true
 }
 
 desc "Run all unit tests with HBase storage"
 Rake::TestTask.new("test_hbase") { |t|
-  t.libs << "lib"
+  t.libs += ["lib", "."]
   t.test_files = FileList['test/hasher_test.rb']
   t.verbose = true
 }
 
 desc "Run all unit tests with Cassandra storage"
 Rake::TestTask.new("test_cassandra") { |t|
-  t.libs << "lib"
+  t.libs += ["lib", "."]
   t.test_files = FileList['test/hasher_test.rb', 'test/cassandra_classifier_test.rb']
   t.verbose = true
 }
 
 desc "Run all unit tests with FileSystem storage"
 Rake::TestTask.new("test_filesystem") { |t|
-  t.libs << "lib"
+  t.libs += ["lib", "."]
   t.test_files = FileList['test/hasher_test.rb', 'test/file_system_classifier_test.rb']
   t.verbose = true
 }
 
 desc "Run all unit tests with MongoDb storage"
 Rake::TestTask.new("test_mongo_db") { |t|
-  t.libs << "lib"
+  t.libs += ["lib", "."]
   t.test_files = FileList['test/hasher_test.rb', 'test/mongo_db_classifier_test.rb']
   t.verbose = true
 }
