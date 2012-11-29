@@ -49,7 +49,7 @@ module Ankusa
       probs = Hash.new 0
       @storage.get_word_counts(word).each { |k,v| probs[k] = v if classnames.include? k }
       vs = vocab_sizes
-      classnames.each { |cn| 
+      classnames.each { |cn|
         # if we've never seen the class, the word prob is 0
         next unless vs.has_key? cn
 

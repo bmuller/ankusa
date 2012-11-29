@@ -4,14 +4,14 @@ module ClassifierBase
   def train
     @classifier.train :spam, "spam and great spam"   # spam:2 great:1
     @classifier.train :good, "words for processing" # word:1 process:1
-    @classifier.train :good, "good word"            # word:1 good:1      
+    @classifier.train :good, "good word"            # word:1 good:1
   end
 
   def test_train
     counts = @storage.get_word_counts(:spam)
     assert_equal counts[:spam], 2
     counts = @storage.get_word_counts(:word)
-    assert_equal counts[:good], 2 
+    assert_equal counts[:good], 2
     assert_equal @storage.get_total_word_count(:good), 4
     assert_equal @storage.get_doc_count(:good), 2
     assert_equal @storage.get_total_word_count(:spam), 3
@@ -41,6 +41,17 @@ module NBClassifierBase
     train
   end
 
+  def test_untrained
+    @storage.reset
+
+    string = "spam is tastey"
+
+    hash = {:spam => 0, :good => 0}
+    assert_equal hash, @classifier.classifications(string)
+    assert_equal nil, @classifier.classify(string)
+  end
+
+
   def test_probs
     spamlog = Math.log(3.0 / 5.0) + Math.log(1.0 / 5.0) + Math.log(2.0 / 5.0)
     goodlog = Math.log(1.0 / 7.0) + Math.log(1.0 / 7.0) + Math.log(3.0 / 5.0)
@@ -64,7 +75,7 @@ module NBClassifierBase
     @classifier.train :somethingelse, "this is something else entirely spam"
     cs = @classifier.classifications("spam is tastey", [:spam, :good])
     assert_equal cs[:spam], spam
-    assert_equal cs[:good], good    
+    assert_equal cs[:good], good
 
     # test for class we didn't train on
     cs = @classifier.classifications("spam is super tastey if you are a zombie", [:spam, :nothing])

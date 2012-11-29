@@ -9,7 +9,7 @@ First, install HBase/Hadoop, Mongo, or Cassandra (>= 0.7.0-rc2).  Then, install 
   gem install hbaserb
   # or
   gem install cassandra
-  # or 
+  # or
   gem install mongo
 
 If you're using HBase, make sure the HBase Thrift interface has been started as well.  Then:
@@ -35,7 +35,7 @@ Using the naive Bayes classifier:
   # This will return the most likely class (as symbol)
   puts c.classify "This is some spammy text"
 
-  # This will return Hash with classes as keys and 
+  # This will return Hash with classes as keys and
   # membership probability as values
   puts c.classifications "This is some spammy text"
 
@@ -54,13 +54,13 @@ Using the naive Bayes classifier:
 == KL Diverence Classifier
 There is a Kullback–Leibler divergence classifier as well.  KL divergence is a distance measure (though not a true metric because it does not satisfy the triangle inequality).  The KL classifier simply measures the relative entropy between the text you want to classify and each of the classes.  The class with the shortest "distance" is the best class.  You may find that for a especially large corpus it may be slightly faster to use this classifier (since prior probablities are never calculated, only likelihoods).
 
-The API is the same as the NaiveBayesClassifier, except rather than calling "classifications" if you want actual numbers you call "distances".  
+The API is the same as the NaiveBayesClassifier, except rather than calling "classifications" if you want actual numbers you call "distances".
 
   require 'rubygems'
   require 'ankusa'
   require 'ankusa/hbase_storage'
 
-  # connect to HBase 
+  # connect to HBase
   storage = Ankusa::HBaseStorage.new 'localhost'
   c = Ankusa::KLDivergenceClassifier.new storage
 
@@ -72,7 +72,7 @@ The API is the same as the NaiveBayesClassifier, except rather than calling "cla
   # This will return the most likely class (as symbol)
   puts c.classify "This is some spammy text"
 
-  # This will return Hash with classes as keys and 
+  # This will return Hash with classes as keys and
   # distances >= 0 as values
   puts c.distances "This is some spammy text"
 
@@ -104,13 +104,13 @@ HBase storage:
 
 For Cassandra storage:
 * You will need Cassandra version 0.7.0-rc2 or greater.
-* You will need to set a max number classes since current implementation of the Ruby Cassandra client doesn't support table scans.  
+* You will need to set a max number classes since current implementation of the Ruby Cassandra client doesn't support table scans.
 * Prior to using the Cassandra storage you will need to run the following command from the cassandra-cli: "create keyspace ankusa with replication_factor = 1".  This should be fixed with a new release candidate for Cassandra.
 
 To use the Cassandra storage class:
   require 'ankusa/cassandra_storage'
   # defaults: host='127.0.0.1', port=9160, keyspace = 'ankusa', max_classes = 100
-  storage = Ankusa::HBaseStorage.new host, port, keyspace, max_classes
+  storage = Ankusa::CassandraStorage.new host, port, keyspace, max_classes
 
 For MongoDB storage:
   require 'ankusa/mongo_db_storage'

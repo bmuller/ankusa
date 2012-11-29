@@ -26,7 +26,7 @@ module Ankusa
       drop_tables
       init_tables
     end
-    
+
     def drop_tables
       freq_table.delete
       summary_table.delete
@@ -69,10 +69,12 @@ module Ankusa
         @klass_word_counts[klass] = summary_table.get(klass, "totals:wordcount").first.to_i64.to_f
       }
     end
-    
+
     def get_doc_count(klass)
       @klass_doc_counts.fetch(klass) {
-        @klass_doc_counts[klass] = summary_table.get(klass, "totals:doccount").first.to_i64.to_f
+        totals = summary_table.get(klass, "totals:doccount")
+        totals = (totals.size === 0) ? 0 : totals.first.to_i64.to_f
+        @klass_doc_counts[klass] = totals
       }
     end
 
@@ -83,7 +85,7 @@ module Ankusa
       if size == count
         summary_table.atomic_increment klass, "totals:vocabsize"
       elsif size == 0
-        summary_table.atomic_increment klass, "totals:vocabsize", -1        
+        summary_table.atomic_increment klass, "totals:vocabsize", -1
       end
       size
     end

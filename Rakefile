@@ -23,7 +23,7 @@ Rake::TestTask.new("test_memory") { |t|
 desc "Run all unit tests with HBase storage"
 Rake::TestTask.new("test_hbase") { |t|
   t.libs += ["lib", "."]
-  t.test_files = FileList['test/hasher_test.rb']
+  t.test_files = FileList['test/hasher_test.rb', 'test/hbase_classifier_test.rb']
   t.verbose = true
 }
 
