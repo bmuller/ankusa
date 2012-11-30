@@ -1,5 +1,7 @@
 require 'rubygems'
 require 'bundler'
+require 'rake/dsl_definition'
+require 'rake/alt_system'
 require 'rake/testtask'
 require 'rdoc/task'
 

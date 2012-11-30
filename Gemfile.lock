@@ -1,16 +1,18 @@
 PATH
   remote: .
   specs:
-    ankusa (0.0.14)
+    ankusa (0.0.15)
       fast-stemmer (>= 1.0.0)
 
 GEM
   remote: http://rubygems.org/
   specs:
     fast-stemmer (1.0.1)
+    rake (10.0.2)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   ankusa!
+  rake
