@@ -5,6 +5,8 @@ require 'rake/alt_system'
 require 'rake/testtask'
 require 'rdoc/task'
 
+task :default => [:test_filesystem]
+
 Bundler::GemHelper.install_tasks
 
 desc "Create documentation"
