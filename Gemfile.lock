@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ankusa (0.0.15)
+    ankusa (0.0.16)
       fast-stemmer (>= 1.0.0)
 
 GEM
