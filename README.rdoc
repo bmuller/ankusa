@@ -1,4 +1,6 @@
 = ankusa
+{<img src="https://secure.travis-ci.org/bmuller/ankusa.png?branch=master" alt="Build Status" />}[https://travis-ci.org/bmuller/ankusa]
+{<img src="https://gemnasium.com/bmuller/ankusa.png" alt="Dependency Status" />}[https://gemnasium.com/bmuller/ankusa]
 
 Ankusa is a text classifier in Ruby that can use either Hadoop's HBase, Mongo, or Cassandra for storage.  Because it uses HBase/Mongo/Cassandra as a backend, the training corpus can be many terabytes in size (though additional memory and single file storage abilities also exist for smaller corpora).
 
