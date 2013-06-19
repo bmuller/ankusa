@@ -20,7 +20,6 @@ If you're using HBase, make sure the HBase Thrift interface has been started as 
 == Basic Usage
 Using the naive Bayes classifier:
 
-  require 'rubygems'
   require 'ankusa'
   require 'ankusa/hbase_storage'
 
