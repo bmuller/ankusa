@@ -15,13 +15,13 @@ module FileSystemClassifierBase
   end
 end
 
-class NBMemoryClassifierTest < Test::Unit::TestCase
+class NBFileSystemClassifierTest < Test::Unit::TestCase
   include FileSystemClassifierBase
   include NBClassifierBase
 end
 
 
-class KLMemoryClassifierTest < Test::Unit::TestCase
+class KLFileSystemClassifierTest < Test::Unit::TestCase
   include FileSystemClassifierBase
   include KLClassifierBase
 end
