@@ -57,6 +57,7 @@ Rake::TestTask.new("test_travis_ci") { |t|
   t.libs += ["lib", "."]
   t.test_files = FileList['test/hasher_test.rb',
                           'test/memory_classifier_test.rb',
-                          'test/file_system_classifier_test.rb']
+                          'test/file_system_classifier_test.rb',
+                          'test/mongo_db_classifier_test.rb']
   t.verbose = true
 }
