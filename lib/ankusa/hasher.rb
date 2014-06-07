@@ -3,7 +3,7 @@ require 'ankusa/stopwords'
 
 module Ankusa
 
-  class TextHash < Hash 
+  class TextHash < Hash
     attr_reader :word_count
 
     def initialize(text=nil, stem=true)
@@ -19,14 +19,14 @@ module Ankusa
 
     # word should be only alphanum chars at this point
     def self.valid_word?(word)
-      not (Ankusa::STOPWORDS.include?(word) || word.length < 3 || word.numeric?)
+      not (Ankusa::STOPWORDS.include?(word) || word.length < 3 || self.numeric_word?(word))
     end
 
     def add_text(text)
       if text.instance_of? Array
         text.each { |t| add_text t }
       else
-        # replace dashes with spaces, then get rid of non-word/non-space characters, 
+        # replace dashes with spaces, then get rid of non-word/non-space characters,
         # then split by space to get words
         words = TextHash.atomize text
         words.each { |word| add_word(word) if TextHash.valid_word?(word) }
@@ -41,6 +41,15 @@ module Ankusa
       word = word.stem if @stem
       key = word.intern
       store key, fetch(key, 0)+1
+    end
+
+    # Due to the character filtering that takes place in atomisation
+    # this method should never received something that could be a
+    # negative number, float etc.
+    # Therefore we can dispense with the SLOW Float(word) method and
+    # just do a simple regex.
+    def self.numeric_word?(word)
+      word.match(/[\d]+/)
     end
   end
 
