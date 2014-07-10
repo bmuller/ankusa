@@ -46,7 +46,7 @@ module NBClassifierBase
 
     string = "spam is tastey"
 
-    hash = {:spam => 0, :good => 0}
+    hash = {:spam => 0.5, :good => 0.5}
     assert_equal hash, @classifier.classifications(string)
     assert_equal nil, @classifier.classify(string)
   end
@@ -79,7 +79,8 @@ module NBClassifierBase
 
     # test for class we didn't train on
     cs = @classifier.classifications("spam is super tastey if you are a zombie", [:spam, :nothing])
-    assert_equal cs[:nothing], 0
+    assert cs[:nothing] < Float::EPSILON
+    assert cs[:nothing] < cs[:spam]
   end
 
   def test_prob_result

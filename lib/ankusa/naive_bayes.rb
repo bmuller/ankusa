@@ -39,8 +39,8 @@ module Ankusa
       TextHash.new(text).each { |word, count|
         probs = get_word_probs(word, classnames)
         classnames.each { |k|
-          # log likelihood should be negative infinity if we've never seen the klass
-          result[k] += probs[k] > 0 ? (Math.log(probs[k]) * count) : -INFTY
+          # Choose a really small probability if the word has never been seen before in class k
+          result[k] += Math.log(probs[k] > 0 ? (probs[k] * count) : Float::EPSILON)
         }
       }
 
